@@ -8,7 +8,8 @@ import java.util.Map;
 import static java.lang.System.getenv;
 
 public class UserDao {
-    public void add(User user) throws ClassNotFoundException, SQLException {
+
+    public Connection getConnection() throws ClassNotFoundException, SQLException {
         Map<String, String> env = getenv();
         String dbHost = env.get("DB_HOST");
         String dbUser = env.get("DB_USER");
@@ -20,7 +21,10 @@ public class UserDao {
                 dbUser,
                 dbPassword
         );
-
+        return con;
+    }
+    public void add(User user) throws ClassNotFoundException, SQLException {
+        Connection con = getConnection();
         PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
         pstmt.setString(1, user.getId());
         pstmt.setString(2, user.getName());
@@ -32,17 +36,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Map<String, String> env = getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
-
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(
-                dbHost,
-                dbUser,
-                dbPassword
-        );
+        Connection con = getConnection();
 
         PreparedStatement pstmt = con.prepareStatement("select id, name, password from users where id = ?");
         pstmt.setString(1, id);
