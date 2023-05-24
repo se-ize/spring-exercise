@@ -7,22 +7,22 @@ import java.util.Map;
 
 import static java.lang.System.getenv;
 
-public class UserDao {
+public abstract class UserDao {
 
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Map<String, String> env = getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+//        Map<String, String> env = getenv();
+//        String dbHost = env.get("DB_HOST");
+//        String dbUser = env.get("DB_USER");
+//        String dbPassword = env.get("DB_PASSWORD");
+//
+//        Class.forName("com.mysql.jdbc.Driver");
+//        Connection con = DriverManager.getConnection(
+//                dbHost,
+//                dbUser,
+//                dbPassword
+//        );
+//        return con;
 
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(
-                dbHost,
-                dbUser,
-                dbPassword
-        );
-        return con;
-    }
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection con = getConnection();
         PreparedStatement pstmt = con.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
@@ -56,14 +56,14 @@ public class UserDao {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao();
+        UserDao userDao = new NUserDao();
         User user = new User();
-        user.setId("3");
+        user.setId("5");
         user.setName("sewoon");
         user.setPassword("0831");
-//        userDao.add(user);
+        userDao.add(user);
 
-        User selectedUser = userDao.get("3");
+        User selectedUser = userDao.get("4");
         System.out.println(selectedUser.getId());
         System.out.println(selectedUser.getName());
         System.out.println(selectedUser.getPassword());
